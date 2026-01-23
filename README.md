@@ -64,6 +64,20 @@ Mobile (< 768px) | Tablet (768-1024px) | Desktop (> 1024px)
 
 Carrinho salvo automaticamente no localStorage
 
+## 🚀 Deploy
+
+### GitHub
+Siga as instruções em [DEPLOY.md](DEPLOY.md) para:
+1. Criar repositório no GitHub
+2. Fazer push do código
+
+### Vercel (Deploy Automático)
+1. Conecte seu repositório GitHub na Vercel
+2. A Vercel detecta automaticamente as configurações do Vite
+3. Deploy em 1 clique!
+
+**Configurações já incluídas:** `vercel.json` para rotas SPA
+
 ## 🔮 Futuras Implementações
 
 - Backend real
