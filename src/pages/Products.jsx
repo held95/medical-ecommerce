@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
 import { categories } from '../data/categories';
+import { FaShoppingCart, FaStar, FaCheck } from 'react-icons/fa';
+import './Products.css';
 
 function Products() {
   const [searchParams] = useSearchParams();
@@ -23,154 +25,179 @@ function Products() {
     setFilteredProducts(filtered);
   }, [selectedCategory, sortBy, filterProducts]);
 
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    }
+  }, [categoryParam]);
+
   const handleAddToCart = (product) => {
     addToCart(product, 1);
     alert(`${product.name} adicionado ao carrinho!`);
   };
 
   return (
-    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
-      <h1 style={{ marginBottom: '2rem' }}>Produtos</h1>
-
-      {/* Filters */}
-      <div style={{
-        backgroundColor: 'white',
-        padding: '1.5rem',
-        borderRadius: '8px',
-        marginBottom: '2rem',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              Categoria:
-            </label>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.625rem',
-                borderRadius: '4px',
-                border: '1px solid #ced4da'
-              }}
-            >
-              <option value="all">Todas as Categorias</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.slug}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              Ordenar por:
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.625rem',
-                borderRadius: '4px',
-                border: '1px solid #ced4da'
-              }}
-            >
-              <option value="name">Nome (A-Z)</option>
-              <option value="price-asc">Preço (Menor)</option>
-              <option value="price-desc">Preço (Maior)</option>
-              <option value="rating">Avaliação</option>
-            </select>
-          </div>
+    <div className="products-page">
+      <div className="container">
+        {/* Page Header */}
+        <div className="page-header">
+          <h1 className="page-title">Nossos Produtos</h1>
+          <p className="page-subtitle">
+            Encontre os melhores equipamentos médicos para sua necessidade
+          </p>
         </div>
-      </div>
 
-      {/* Products Grid */}
-      <div style={{ marginBottom: '1rem' }}>
-        <p style={{ color: '#6c757d' }}>
-          {filteredProducts.length} produto(s) encontrado(s)
-        </p>
-      </div>
+        {/* Filters Card */}
+        <div className="filters-card">
+          <div className="filters-wrapper">
+            <div className="filter-group">
+              <label className="filter-label">Categoria:</label>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">Todas as Categorias</option>
+                {categories.map(cat => (
+                  <option key={cat.id} value={cat.slug}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-      <div className="grid grid-4">
-        {filteredProducts.map(product => (
-          <div key={product.id} className="card">
-            <Link to={`/products/${product.id}`}>
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
-            </Link>
-            <div className="card-body">
-              <Link
-                to={`/products/${product.id}`}
-                style={{ textDecoration: 'none', color: 'inherit' }}
+            <div className="filter-group">
+              <label className="filter-label">Ordenar por:</label>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="filter-select"
               >
-                <h3 style={{
-                  fontSize: '1rem',
-                  marginBottom: '0.5rem',
-                  height: '2.4em',
-                  overflow: 'hidden'
-                }}>
-                  {product.name}
-                </h3>
-              </Link>
-              <p style={{ fontSize: '0.875rem', color: '#6c757d', marginBottom: '0.5rem' }}>
-                {product.brand}
-              </p>
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <span style={{
-                  color: '#007bff',
-                  fontSize: '1.25rem',
-                  fontWeight: 'bold'
-                }}>
-                  R$ {product.price.toFixed(2)}
-                </span>
-                {product.stock > 0 ? (
-                  <span style={{
-                    color: '#28a745',
-                    fontSize: '0.75rem'
-                  }}>
-                    Em estoque
-                  </span>
-                ) : (
-                  <span style={{
-                    color: '#dc3545',
-                    fontSize: '0.75rem'
-                  }}>
-                    Esgotado
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={() => handleAddToCart(product)}
-                disabled={product.stock === 0}
-                className="btn btn-primary"
-                style={{
-                  width: '100%',
-                  backgroundColor: product.stock === 0 ? '#6c757d' : '#007bff'
-                }}
-              >
-                {product.stock === 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}
-              </button>
+                <option value="name">Nome (A-Z)</option>
+                <option value="price-asc">Menor Preço</option>
+                <option value="price-desc">Maior Preço</option>
+                <option value="rating">Melhor Avaliação</option>
+              </select>
+            </div>
+
+            <div className="results-count">
+              <span className="count-number">{filteredProducts.length}</span>
+              <span className="count-label">produto(s) encontrado(s)</span>
             </div>
           </div>
-        ))}
-      </div>
-
-      {filteredProducts.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#6c757d' }}>
-          <p style={{ fontSize: '1.25rem' }}>Nenhum produto encontrado.</p>
         </div>
-      )}
+
+        {/* Products Grid */}
+        {filteredProducts.length > 0 ? (
+          <div className="products-grid-page">
+            {filteredProducts.map(product => (
+              <div key={product.id} className="product-card-premium">
+                {/* Badges */}
+                <div className="product-badges">
+                  {product.discount > 0 && (
+                    <span className="badge-discount">-{product.discount}%</span>
+                  )}
+                  {product.stock === 0 && (
+                    <span className="badge-out-of-stock">Esgotado</span>
+                  )}
+                  {product.stock > 0 && product.stock < 10 && (
+                    <span className="badge-low-stock">Últimas unidades</span>
+                  )}
+                </div>
+
+                {/* Image */}
+                <Link to={`/products/${product.id}`} className="product-image-link">
+                  <div className="product-image-container">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="product-image"
+                    />
+                  </div>
+                </Link>
+
+                {/* Content */}
+                <div className="product-content">
+                  <span className="product-brand">{product.brand}</span>
+
+                  <Link to={`/products/${product.id}`} className="product-title-link">
+                    <h3 className="product-title">{product.name}</h3>
+                  </Link>
+
+                  {/* Rating */}
+                  {product.rating && (
+                    <div className="product-rating">
+                      <div className="rating-stars">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar
+                            key={i}
+                            className={i < product.rating ? 'star-filled' : 'star-empty'}
+                          />
+                        ))}
+                      </div>
+                      {product.reviewCount && (
+                        <span className="rating-count">({product.reviewCount})</span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Prices */}
+                  <div className="product-prices">
+                    {product.oldPrice && (
+                      <span className="price-old">R$ {product.oldPrice.toFixed(2)}</span>
+                    )}
+                    <span className="price-current">R$ {product.price.toFixed(2)}</span>
+
+                    {/* PIX Discount */}
+                    {product.price > 0 && (
+                      <div className="price-pix">
+                        <span className="pix-badge">PIX</span>
+                        <span className="pix-price">R$ {(product.price * 0.95).toFixed(2)}</span>
+                        <span className="pix-label">(5% OFF)</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Stock Status */}
+                  {product.stock > 0 && (
+                    <div className="product-stock">
+                      <FaCheck className="stock-icon" />
+                      <span className="stock-text">Em estoque</span>
+                    </div>
+                  )}
+
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    disabled={product.stock === 0}
+                    className={`btn-add-to-cart ${product.stock === 0 ? 'disabled' : ''}`}
+                  >
+                    <FaShoppingCart />
+                    {product.stock === 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state">
+            <div className="empty-icon">🔍</div>
+            <h3 className="empty-title">Nenhum produto encontrado</h3>
+            <p className="empty-text">
+              Tente ajustar os filtros ou escolher outra categoria.
+            </p>
+            <button
+              onClick={() => {
+                setSelectedCategory('all');
+                setSortBy('name');
+              }}
+              className="btn btn-primary"
+            >
+              Limpar Filtros
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

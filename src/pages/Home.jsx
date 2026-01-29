@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { categories } from '../data/categories';
 import { products } from '../data/products';
-import { FaSyringe, FaMask, FaStethoscope, FaBed } from 'react-icons/fa';
+import { FaSyringe, FaMask, FaStethoscope, FaBed, FaCheckCircle, FaTruck, FaHeadset, FaShieldAlt, FaArrowRight, FaWhatsapp } from 'react-icons/fa';
+import './Home.css';
 
 const iconMap = {
   'FaSyringe': FaSyringe,
@@ -11,62 +12,104 @@ const iconMap = {
 };
 
 function Home() {
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products.slice(0, 8);
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section style={{
-        backgroundColor: '#007bff',
-        color: 'white',
-        padding: '4rem 0',
-        textAlign: 'center'
-      }}>
+    <div className="home-page">
+      {/* Hero Section Premium */}
+      <section className="hero-section">
+        <div className="hero-overlay" />
         <div className="container">
-          <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
-            Bem-vindo ao MediShop
-          </h1>
-          <p style={{ fontSize: '1.25rem', marginBottom: '2rem' }}>
-            Equipamentos e materiais médicos de alta qualidade
-          </p>
-          <Link to="/products" className="btn btn-secondary" style={{
-            padding: '1rem 2rem',
-            fontSize: '1.125rem',
-            textDecoration: 'none',
-            backgroundColor: '#28a745',
-            color: 'white',
-            borderRadius: '8px',
-            display: 'inline-block'
-          }}>
-            Ver Todos os Produtos
-          </Link>
+          <div className="hero-content animate-fade-in-up">
+            <div className="hero-badge">
+              <FaCheckCircle /> Certificado ANVISA
+            </div>
+            <h1 className="hero-title">
+              Equipamentos Médicos de <span className="text-gradient">Alta Performance</span>
+            </h1>
+            <p className="hero-subtitle">
+              Soluções completas para profissionais da saúde. Tecnologia de ponta,
+              atendimento especializado e entrega em todo Brasil.
+            </p>
+            <div className="hero-actions">
+              <Link to="/products" className="btn-hero-primary">
+                Ver Catálogo Completo
+                <FaArrowRight />
+              </Link>
+              <a href="https://wa.me/5516999999999" className="btn-hero-secondary" target="_blank" rel="noopener noreferrer">
+                <FaWhatsapp /> Fale com Especialista
+              </a>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="hero-trust-badges">
+              <div className="trust-badge">
+                <FaTruck />
+                <span>Frete Grátis Sul/Sudeste</span>
+              </div>
+              <div className="trust-badge">
+                <FaHeadset />
+                <span>Suporte 24/7</span>
+              </div>
+              <div className="trust-badge">
+                <FaShieldAlt />
+                <span>Garantia Estendida</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="container">
+          <div className="stats-grid">
+            <div className="stat-card animate-fade-in-up">
+              <div className="stat-number">5.000+</div>
+              <div className="stat-label">Profissionais Atendidos</div>
+            </div>
+            <div className="stat-card animate-fade-in-up animate-delay-100">
+              <div className="stat-number">98%</div>
+              <div className="stat-label">Satisfação dos Clientes</div>
+            </div>
+            <div className="stat-card animate-fade-in-up animate-delay-200">
+              <div className="stat-number">15 Anos</div>
+              <div className="stat-label">No Mercado Médico</div>
+            </div>
+            <div className="stat-card animate-fade-in-up animate-delay-300">
+              <div className="stat-number">24h</div>
+              <div className="stat-label">Entrega Expressa*</div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Categories Section */}
-      <section style={{ padding: '3rem 0' }}>
+      <section className="categories-section">
         <div className="container">
-          <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>Categorias</h2>
-          <div className="grid grid-4">
+          <div className="section-header">
+            <h2 className="section-title">Explore por Categoria</h2>
+            <p className="section-subtitle">
+              Encontre os melhores equipamentos organizados por especialidade
+            </p>
+          </div>
+          <div className="categories-grid">
             {categories.map(category => {
               const Icon = iconMap[category.icon];
               return (
                 <Link
                   key={category.id}
                   to={`/products?category=${category.slug}`}
-                  className="card"
-                  style={{
-                    padding: '2rem',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    color: 'inherit'
-                  }}
+                  className="category-card hover-lift"
                 >
-                  <Icon style={{ fontSize: '3rem', color: category.color, margin: '0 auto 1rem' }} />
-                  <h3 style={{ marginBottom: '0.5rem' }}>{category.name}</h3>
-                  <p style={{ color: '#6c757d', fontSize: '0.875rem' }}>
-                    {category.productCount} produtos
-                  </p>
+                  <div className="category-icon" style={{ backgroundColor: category.color + '20', color: category.color }}>
+                    <Icon />
+                  </div>
+                  <h3 className="category-name">{category.name}</h3>
+                  <p className="category-count">{category.productCount} produtos</p>
+                  <div className="category-arrow">
+                    <FaArrowRight />
+                  </div>
                 </Link>
               );
             })}
@@ -75,46 +118,52 @@ function Home() {
       </section>
 
       {/* Featured Products */}
-      <section style={{ padding: '3rem 0', backgroundColor: '#f8f9fa' }}>
+      <section className="products-section">
         <div className="container">
-          <h2 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            Produtos em Destaque
-          </h2>
-          <div className="grid grid-4">
+          <div className="section-header">
+            <h2 className="section-title">Produtos em Destaque</h2>
+            <p className="section-subtitle">
+              Seleção especial dos nossos produtos mais populares
+            </p>
+          </div>
+          <div className="products-grid">
             {featuredProducts.map(product => (
               <Link
                 key={product.id}
                 to={`/products/${product.id}`}
-                className="card"
-                style={{ textDecoration: 'none', color: 'inherit' }}
+                className="product-card-home hover-lift"
               >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                />
-                <div className="card-body">
-                  <h3 style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>
-                    {product.name}
-                  </h3>
-                  <p style={{
-                    color: '#007bff',
-                    fontSize: '1.25rem',
-                    fontWeight: 'bold'
-                  }}>
-                    R$ {product.price.toFixed(2)}
-                  </p>
+                <div className="product-image-wrapper">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="product-image"
+                  />
+                  {product.discount > 0 && (
+                    <span className="product-badge-discount">-{product.discount}%</span>
+                  )}
+                </div>
+                <div className="product-card-content">
+                  <span className="product-brand">{product.brand}</span>
+                  <h3 className="product-name">{product.name}</h3>
+                  <div className="product-prices">
+                    {product.oldPrice && (
+                      <span className="price-old">R$ {product.oldPrice.toFixed(2)}</span>
+                    )}
+                    <span className="price-current">R$ {product.price.toFixed(2)}</span>
+                  </div>
+                  <div className="product-action">
+                    <span>Ver Detalhes</span>
+                    <FaArrowRight />
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-            <Link to="/products" className="btn btn-primary" style={{
-              padding: '0.75rem 1.5rem',
-              textDecoration: 'none',
-              display: 'inline-block'
-            }}>
+          <div className="section-cta">
+            <Link to="/products" className="btn btn-primary btn-lg">
               Ver Todos os Produtos
+              <FaArrowRight />
             </Link>
           </div>
         </div>
