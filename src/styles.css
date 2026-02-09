@@ -10,29 +10,39 @@
 }
 
 :root {
-  /* Cores Primárias - Verde Médico Premium */
-  --primary: #31c9b2;
-  --primary-dark: #02bc67;
-  --primary-light: #5fd9c4;
-  --primary-shadow: rgba(49, 201, 178, 0.2);
+  /* Cores Primárias - Navy Blue (NCL-Inspired) */
+  --primary: #253746;
+  --primary-dark: #1a2832;
+  --primary-light: #354959;
+  --primary-shadow: rgba(37, 55, 70, 0.2);
 
-  /* Cores Secundárias - Profissionalismo */
-  --secondary: #043931;
-  --secondary-light: #0a5a4d;
+  /* Cores de Destaque - Coral */
+  --coral: #ff9289;
+  --coral-dark: #ff7768;
+  --coral-light: #ffa69c;
+  --coral-shadow: rgba(255, 146, 137, 0.3);
+
+  /* Cores Secundárias (mantidas para compatibilidade) */
+  --secondary: #253746;
+  --secondary-light: #354959;
 
   /* Cores de Apoio */
   --accent-gold: #d4af37;
-  --accent-blue: #2196f3;
+  --accent-blue: #3b82f6;
 
   /* Neutras - Sofisticação */
   --white: #ffffff;
+  --light-gray: #f5f7fa;
   --gray-50: #fafafa;
   --gray-100: #f7f7f7;
   --gray-200: #e5e5e5;
+  --medium-gray: #e4e7eb;
   --gray-400: #9e9e9e;
   --gray-600: #757575;
+  --dark-gray: #6b7280;
   --gray-800: #2f2d2d;
   --gray-900: #212529;
+  --almost-black: #1f2937;
 
   /* Estados */
   --success: #4caf50;
@@ -47,12 +57,15 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16);
-  --shadow-premium: 0 20px 60px rgba(49, 201, 178, 0.15);
+  --shadow-premium: 0 20px 60px rgba(255, 146, 137, 0.15);
+  --shadow-coral: 0 8px 24px rgba(255, 146, 137, 0.25);
 
   /* Gradientes Premium */
-  --gradient-primary: linear-gradient(135deg, #31c9b2 0%, #02bc67 100%);
-  --gradient-dark: linear-gradient(135deg, #043931 0%, #02bc67 100%);
-  --gradient-overlay: linear-gradient(180deg, rgba(4, 57, 49, 0.8) 0%, rgba(4, 57, 49, 0.95) 100%);
+  --gradient-primary: linear-gradient(135deg, #253746 0%, #1a2832 100%);
+  --gradient-coral: linear-gradient(135deg, #ff9289 0%, #ff7768 100%);
+  --gradient-dark: linear-gradient(135deg, #253746 0%, #1a2832 100%);
+  --gradient-hero: linear-gradient(180deg, rgba(37, 55, 70, 0.85) 0%, rgba(26, 40, 50, 0.95) 100%);
+  --gradient-overlay: linear-gradient(180deg, rgba(37, 55, 70, 0.8) 0%, rgba(37, 55, 70, 0.95) 100%);
 
   /* Transições Suaves */
   --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -222,15 +235,37 @@ h6 { font-size: var(--text-base); font-weight: var(--font-semibold); }
 }
 
 .btn-primary {
-  background: var(--gradient-primary);
+  background: var(--gradient-coral);
   color: var(--white);
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover {
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-coral);
+}
+
+.btn-coral {
+  background: var(--gradient-coral);
+  color: var(--white);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-coral:hover {
+  background: var(--coral-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-coral);
+}
+
+.btn-navy {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-navy:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
 }
 
 .btn-secondary {
@@ -255,11 +290,22 @@ h6 { font-size: var(--text-base); font-weight: var(--font-semibold); }
 
 .btn-outline {
   background: transparent;
+  border: 2px solid var(--coral);
+  color: var(--coral);
+}
+
+.btn-outline:hover {
+  background: var(--coral);
+  color: var(--white);
+}
+
+.btn-outline-navy {
+  background: transparent;
   border: 2px solid var(--primary);
   color: var(--primary);
 }
 
-.btn-outline:hover {
+.btn-outline-navy:hover {
   background: var(--primary);
   color: var(--white);
 }
@@ -412,6 +458,53 @@ h6 { font-size: var(--text-base); font-weight: var(--font-semibold); }
 .ripple:active::after {
   width: 300px;
   height: 300px;
+}
+
+/* Utility Classes - Colors */
+.text-coral { color: var(--coral) !important; }
+.text-navy { color: var(--primary) !important; }
+.text-white { color: var(--white) !important; }
+.text-dark { color: var(--almost-black) !important; }
+
+.bg-coral { background-color: var(--coral) !important; }
+.bg-coral-light { background-color: var(--coral-light) !important; }
+.bg-navy { background-color: var(--primary) !important; }
+.bg-navy-dark { background-color: var(--primary-dark) !important; }
+.bg-white { background-color: var(--white) !important; }
+.bg-light { background-color: var(--light-gray) !important; }
+
+.border-coral { border-color: var(--coral) !important; }
+.border-navy { border-color: var(--primary) !important; }
+
+/* Badge Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+.badge-coral {
+  background-color: var(--coral);
+  color: var(--white);
+}
+
+.badge-navy {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+.badge-success {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.badge-warning {
+  background-color: var(--warning);
+  color: var(--white);
 }
 
 /* RESPONSIVIDADE */

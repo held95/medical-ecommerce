@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
 import { useCart } from '../context/CartContext';
 import { categories } from '../data/categories';
-import { FaShoppingCart, FaStar, FaCheck } from 'react-icons/fa';
+import { FaShoppingCart, FaStar, FaCheck, FaTag } from 'react-icons/fa';
 import './Products.css';
 
 function Products() {
@@ -15,6 +15,7 @@ function Products() {
 
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'all');
   const [sortBy, setSortBy] = useState('name');
+  const [showExclusiveOnly, setShowExclusiveOnly] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
@@ -22,8 +23,14 @@ function Products() {
       category: selectedCategory !== 'all' ? selectedCategory : null,
       sortBy
     });
-    setFilteredProducts(filtered);
-  }, [selectedCategory, sortBy, filterProducts]);
+
+    // Apply exclusive filter if needed
+    const finalFiltered = showExclusiveOnly
+      ? filtered.filter(p => p.exclusive === true)
+      : filtered;
+
+    setFilteredProducts(finalFiltered);
+  }, [selectedCategory, sortBy, showExclusiveOnly, filterProducts]);
 
   useEffect(() => {
     if (categoryParam) {
@@ -41,9 +48,9 @@ function Products() {
       <div className="container">
         {/* Page Header */}
         <div className="page-header">
-          <h1 className="page-title">Nossos Produtos</h1>
+          <h1 className="page-title">Todos os Benefícios</h1>
           <p className="page-subtitle">
-            Encontre os melhores equipamentos médicos para sua necessidade
+            Explore benefícios exclusivos para médicos M&G com descontos de até 30%
           </p>
         </div>
 
@@ -76,13 +83,26 @@ function Products() {
                 <option value="name">Nome (A-Z)</option>
                 <option value="price-asc">Menor Preço</option>
                 <option value="price-desc">Maior Preço</option>
+                <option value="discount-desc">Maior Desconto</option>
                 <option value="rating">Melhor Avaliação</option>
               </select>
             </div>
 
+            <div className="filter-group filter-checkbox">
+              <label className="filter-checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={showExclusiveOnly}
+                  onChange={(e) => setShowExclusiveOnly(e.target.checked)}
+                  className="filter-checkbox-input"
+                />
+                <span>Apenas Exclusivos</span>
+              </label>
+            </div>
+
             <div className="results-count">
               <span className="count-number">{filteredProducts.length}</span>
-              <span className="count-label">produto(s) encontrado(s)</span>
+              <span className="count-label">benefício(s) encontrado(s)</span>
             </div>
           </div>
         </div>
@@ -90,99 +110,128 @@ function Products() {
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
           <div className="products-grid-page">
-            {filteredProducts.map(product => (
-              <div key={product.id} className="product-card-premium">
-                {/* Badges */}
-                <div className="product-badges">
-                  {product.discount > 0 && (
-                    <span className="badge-discount">-{product.discount}%</span>
-                  )}
-                  {product.stock === 0 && (
-                    <span className="badge-out-of-stock">Esgotado</span>
-                  )}
-                  {product.stock > 0 && product.stock < 10 && (
-                    <span className="badge-low-stock">Últimas unidades</span>
-                  )}
-                </div>
+            {filteredProducts.map(product => {
+              const savings = product.oldPrice ? (product.oldPrice - product.memberPrice) : 0;
 
-                {/* Image */}
-                <Link to={`/products/${product.id}`} className="product-image-link">
-                  <div className="product-image-container">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="product-image"
-                    />
+              return (
+                <div key={product.id} className="product-card-premium">
+                  {/* Badges */}
+                  <div className="product-badges">
+                    {product.discount > 0 && (
+                      <span className="badge-discount">-{product.discount}%</span>
+                    )}
+                    {product.exclusive && (
+                      <span className="badge-exclusive">Exclusivo</span>
+                    )}
+                    {product.stock === 0 && (
+                      <span className="badge-out-of-stock">Esgotado</span>
+                    )}
+                    {product.stock > 0 && product.stock < 10 && (
+                      <span className="badge-low-stock">Últimas unidades</span>
+                    )}
                   </div>
-                </Link>
 
-                {/* Content */}
-                <div className="product-content">
-                  <span className="product-brand">{product.brand}</span>
+                  {/* Partner Logo */}
+                  {product.partnerLogo && (
+                    <div className="partner-logo-badge">
+                      <img
+                        src={product.partnerLogo}
+                        alt={product.brand}
+                        className="partner-logo-img"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
 
-                  <Link to={`/products/${product.id}`} className="product-title-link">
-                    <h3 className="product-title">{product.name}</h3>
+                  {/* Image */}
+                  <Link to={`/benefits/${product.id}`} className="product-image-link">
+                    <div className="product-image-container">
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="product-image"
+                      />
+                    </div>
                   </Link>
 
-                  {/* Rating */}
-                  {product.rating && (
-                    <div className="product-rating">
-                      <div className="rating-stars">
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar
-                            key={i}
-                            className={i < product.rating ? 'star-filled' : 'star-empty'}
-                          />
-                        ))}
+                  {/* Content */}
+                  <div className="product-content">
+                    <span className="product-brand">{product.brand}</span>
+
+                    <Link to={`/benefits/${product.id}`} className="product-title-link">
+                      <h3 className="product-title">{product.name}</h3>
+                    </Link>
+
+                    {/* Rating */}
+                    {product.rating && (
+                      <div className="product-rating">
+                        <div className="rating-stars">
+                          {[...Array(5)].map((_, i) => (
+                            <FaStar
+                              key={i}
+                              className={i < product.rating ? 'star-filled' : 'star-empty'}
+                            />
+                          ))}
+                        </div>
+                        {product.reviewCount && (
+                          <span className="rating-count">({product.reviewCount})</span>
+                        )}
                       </div>
-                      {product.reviewCount && (
-                        <span className="rating-count">({product.reviewCount})</span>
+                    )}
+
+                    {/* Prices */}
+                    <div className="product-prices">
+                      {product.oldPrice && (
+                        <span className="price-old">R$ {product.oldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                      )}
+                      <span className="price-member">R$ {product.memberPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+
+                      {/* Member Savings */}
+                      {savings > 0 && (
+                        <div className="price-savings">
+                          <FaTag className="savings-icon" />
+                          <span className="savings-text">
+                            Você economiza: R$ {savings.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
                       )}
                     </div>
-                  )}
 
-                  {/* Prices */}
-                  <div className="product-prices">
-                    {product.oldPrice && (
-                      <span className="price-old">R$ {product.oldPrice.toFixed(2)}</span>
-                    )}
-                    <span className="price-current">R$ {product.price.toFixed(2)}</span>
-
-                    {/* PIX Discount */}
-                    {product.price > 0 && (
-                      <div className="price-pix">
-                        <span className="pix-badge">PIX</span>
-                        <span className="pix-price">R$ {(product.price * 0.95).toFixed(2)}</span>
-                        <span className="pix-label">(5% OFF)</span>
+                    {/* Stock Status */}
+                    {product.stock > 0 && (
+                      <div className="product-stock">
+                        <FaCheck className="stock-icon" />
+                        <span className="stock-text">Disponível</span>
                       </div>
                     )}
+
+                    {/* Installments */}
+                    {product.installments && product.memberPrice > 100 && (
+                      <div className="product-installments">
+                        Em até {product.installments}x de R$ {(product.memberPrice / product.installments).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+                    )}
+
+                    {/* Add to Cart Button */}
+                    <button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={product.stock === 0}
+                      className={`btn-add-to-cart ${product.stock === 0 ? 'disabled' : ''}`}
+                    >
+                      <FaShoppingCart />
+                      {product.stock === 0 ? 'Indisponível' : 'Adicionar ao Carrinho'}
+                    </button>
                   </div>
-
-                  {/* Stock Status */}
-                  {product.stock > 0 && (
-                    <div className="product-stock">
-                      <FaCheck className="stock-icon" />
-                      <span className="stock-text">Em estoque</span>
-                    </div>
-                  )}
-
-                  {/* Add to Cart Button */}
-                  <button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={product.stock === 0}
-                    className={`btn-add-to-cart ${product.stock === 0 ? 'disabled' : ''}`}
-                  >
-                    <FaShoppingCart />
-                    {product.stock === 0 ? 'Esgotado' : 'Adicionar ao Carrinho'}
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="empty-state">
             <div className="empty-icon">🔍</div>
-            <h3 className="empty-title">Nenhum produto encontrado</h3>
+            <h3 className="empty-title">Nenhum benefício encontrado</h3>
             <p className="empty-text">
               Tente ajustar os filtros ou escolher outra categoria.
             </p>
@@ -190,6 +239,7 @@ function Products() {
               onClick={() => {
                 setSelectedCategory('all');
                 setSortBy('name');
+                setShowExclusiveOnly(false);
               }}
               className="btn btn-primary"
             >

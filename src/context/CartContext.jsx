@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer, useEffect } from 'react';
 
 const CartContext = createContext();
 
-const CART_STORAGE_KEY = 'medical-ecommerce-cart';
+const CART_STORAGE_KEY = 'mge-benefits-cart';
 
 // Reducer para gerenciar o estado do carrinho
 const cartReducer = (state, action) => {
@@ -107,11 +107,34 @@ export const CartProvider = ({ children }) => {
     dispatch({ type: 'CLEAR_CART' });
   };
 
-  // Calcular total do carrinho
+  // Calcular total do carrinho (usando memberPrice)
   const getCartTotal = () => {
     return state.items.reduce((total, item) => {
-      return total + (item.product.price * item.quantity);
+      const price = item.product.memberPrice || item.product.price;
+      return total + (price * item.quantity);
     }, 0);
+  };
+
+  // Calcular desconto adicional de membro (5% sobre o total)
+  const getMemberDiscount = () => {
+    const total = getCartTotal();
+    return total * 0.05; // 5% de desconto adicional
+  };
+
+  // Calcular economia total (diferença entre oldPrice e memberPrice)
+  const getTotalSavings = () => {
+    return state.items.reduce((savings, item) => {
+      const oldPrice = item.product.oldPrice || item.product.price;
+      const memberPrice = item.product.memberPrice || item.product.price;
+      return savings + ((oldPrice - memberPrice) * item.quantity);
+    }, 0);
+  };
+
+  // Calcular total do carrinho com desconto de membro aplicado
+  const getCartTotalWithMemberDiscount = () => {
+    const total = getCartTotal();
+    const discount = getMemberDiscount();
+    return total - discount;
   };
 
   // Contar itens no carrinho
@@ -126,6 +149,9 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     clearCart,
     getCartTotal,
+    getMemberDiscount,
+    getTotalSavings,
+    getCartTotalWithMemberDiscount,
     getCartCount
   };
 

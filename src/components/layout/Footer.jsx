@@ -11,29 +11,29 @@ function Footer() {
             <div className="trust-item">
               <FaCertificate className="trust-icon" />
               <div>
-                <strong>Certificado ANVISA</strong>
-                <span>Todos os produtos regularizados</span>
+                <strong>100+ Parceiros Premium</strong>
+                <span>Marcas renomadas e confiáveis</span>
               </div>
             </div>
             <div className="trust-item">
               <FaTruck className="trust-icon" />
               <div>
-                <strong>Frete Grátis</strong>
-                <span>Sul e Sudeste acima de R$ 500</span>
+                <strong>Atendimento Exclusivo</strong>
+                <span>Suporte personalizado para médicos</span>
               </div>
             </div>
             <div className="trust-item">
               <FaShieldAlt className="trust-icon" />
               <div>
-                <strong>Compra Segura</strong>
-                <span>Certificado SSL e criptografia</span>
+                <strong>Descontos até 30%</strong>
+                <span>Benefícios exclusivos M&G</span>
               </div>
             </div>
             <div className="trust-item">
               <FaCreditCard className="trust-icon" />
               <div>
-                <strong>Parcele em 6x</strong>
-                <span>Sem juros no cartão</span>
+                <strong>Segurança Garantida</strong>
+                <span>Transações 100% seguras</span>
               </div>
             </div>
           </div>
@@ -46,10 +46,10 @@ function Footer() {
           <div className="footer-grid">
             {/* Sobre */}
             <div className="footer-column">
-              <h3 className="footer-title">Medical E-commerce</h3>
+              <h3 className="footer-title">M&G Benefits Platform</h3>
               <p className="footer-description">
-                Sua loja especializada em equipamentos médicos de alta qualidade.
-                Atendemos profissionais da saúde em todo o Brasil desde 2010.
+                Plataforma exclusiva de benefícios para médicos associados a M&G.
+                Descontos especiais em tecnologia, viagens, cursos e muito mais.
               </p>
               <div className="footer-social">
                 <a href="#" className="social-link" aria-label="Facebook">
@@ -71,11 +71,11 @@ function Footer() {
             <div className="footer-column">
               <h4 className="footer-heading">Institucional</h4>
               <ul className="footer-links">
-                <li><a href="#">Sobre Nós</a></li>
+                <li><a href="#">Quem Somos</a></li>
+                <li><a href="#">Parceiros</a></li>
+                <li><a href="#">Benefícios</a></li>
                 <li><a href="#">Política de Privacidade</a></li>
-                <li><a href="#">Termos de Uso</a></li>
-                <li><a href="#">Trocas e Devoluções</a></li>
-                <li><a href="#">Formas de Pagamento</a></li>
+                <li><a href="#">Fale Conosco</a></li>
               </ul>
             </div>
 
@@ -140,7 +140,7 @@ function Footer() {
         <div className="container">
           <div className="footer-bottom-content">
             <p className="footer-copyright">
-              © 2026 Medical E-commerce. Todos os direitos reservados.
+              © 2026 M&G Benefits Platform. Todos os direitos reservados.
             </p>
             <div className="footer-payment-info">
               <span>Aceitamos: Cartão de Crédito, PIX, Boleto</span>

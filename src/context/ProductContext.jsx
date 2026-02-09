@@ -61,10 +61,10 @@ export const ProductProvider = ({ children }) => {
     if (sortBy) {
       switch (sortBy) {
         case 'price-asc':
-          filtered.sort((a, b) => a.price - b.price);
+          filtered.sort((a, b) => a.memberPrice - b.memberPrice);
           break;
         case 'price-desc':
-          filtered.sort((a, b) => b.price - a.price);
+          filtered.sort((a, b) => b.memberPrice - a.memberPrice);
           break;
         case 'name':
           filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -72,12 +72,35 @@ export const ProductProvider = ({ children }) => {
         case 'rating':
           filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
           break;
+        case 'discount-desc':
+          filtered.sort((a, b) => (b.discount || 0) - (a.discount || 0));
+          break;
         default:
           break;
       }
     }
 
     return filtered;
+  };
+
+  // Buscar benefícios exclusivos
+  const getExclusiveBenefits = () => {
+    return products.filter(p => p.exclusive === true);
+  };
+
+  // Buscar benefícios válidos (não expirados)
+  const getValidBenefits = () => {
+    const today = new Date().toISOString().split('T')[0];
+    return products.filter(p => !p.validUntil || p.validUntil >= today);
+  };
+
+  // Buscar benefícios por parceiro
+  const getBenefitsByPartner = (partnerName) => {
+    if (!partnerName) return products;
+    const lowerPartner = partnerName.toLowerCase();
+    return products.filter(p =>
+      p.brand.toLowerCase().includes(lowerPartner)
+    );
   };
 
   // Adicionar novo produto (Admin)
@@ -164,6 +187,9 @@ export const ProductProvider = ({ children }) => {
     getProductsByCategory,
     searchProducts,
     filterProducts,
+    getExclusiveBenefits,
+    getValidBenefits,
+    getBenefitsByPartner,
     addProduct,
     updateProduct,
     deleteProduct,

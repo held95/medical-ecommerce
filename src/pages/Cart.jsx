@@ -1,169 +1,193 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
+import { FaTrash, FaMinus, FaPlus, FaTag } from 'react-icons/fa';
+import './Cart.css';
 
 function Cart() {
   const navigate = useNavigate();
-  const { items, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+  const {
+    items,
+    removeFromCart,
+    updateQuantity,
+    getCartTotal,
+    getTotalSavings,
+    clearCart
+  } = useCart();
 
   if (items.length === 0) {
     return (
-      <div className="container" style={{ paddingTop: '3rem', paddingBottom: '3rem', textAlign: 'center' }}>
-        <h1 style={{ marginBottom: '1rem' }}>Carrinho Vazio</h1>
-        <p style={{ color: '#6c757d', marginBottom: '2rem' }}>
-          Você ainda não adicionou produtos ao carrinho.
-        </p>
-        <Link to="/products" className="btn btn-primary" style={{
-          textDecoration: 'none',
-          display: 'inline-block'
-        }}>
-          Continuar Comprando
-        </Link>
+      <div className="cart-empty-container">
+        <div className="cart-empty-content">
+          <div className="cart-empty-icon">🛒</div>
+          <h1 className="cart-empty-title">Carrinho Vazio</h1>
+          <p className="cart-empty-text">
+            Você ainda não adicionou benefícios ao carrinho.
+          </p>
+          <Link to="/benefits" className="btn btn-coral btn-lg">
+            Explorar Benefícios
+          </Link>
+        </div>
       </div>
     );
   }
 
-  const shipping = 25.00;
-  const total = getCartTotal() + shipping;
+  const shipping = 0; // Free shipping for members
+  const subtotal = getCartTotal();
+  const savings = getTotalSavings();
+  const total = subtotal + shipping;
 
   return (
-    <div className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
-      <h1 style={{ marginBottom: '2rem' }}>Carrinho de Compras</h1>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '2rem'
-      }}>
-        {/* Cart Items */}
-        <div style={{ gridColumn: '1 / -1' }}>
-          {items.map(item => (
-            <div key={item.product.id} style={{
-              backgroundColor: 'white',
-              padding: '1.5rem',
-              borderRadius: '8px',
-              marginBottom: '1rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              display: 'flex',
-              gap: '1.5rem',
-              alignItems: 'center'
-            }}>
-              <img
-                src={item.product.image}
-                alt={item.product.name}
-                style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px' }}
-              />
-
-              <div style={{ flex: 1 }}>
-                <h3 style={{ marginBottom: '0.5rem' }}>{item.product.name}</h3>
-                <p style={{ color: '#6c757d', fontSize: '0.875rem' }}>
-                  {item.product.brand}
-                </p>
-                <p style={{ color: '#007bff', fontSize: '1.25rem', fontWeight: 'bold', marginTop: '0.5rem' }}>
-                  R$ {item.product.price.toFixed(2)}
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <button
-                  onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                  className="btn btn-sm"
-                  style={{ padding: '0.5rem', backgroundColor: '#6c757d', color: 'white' }}
-                >
-                  <FaMinus />
-                </button>
-                <span style={{ minWidth: '40px', textAlign: 'center', fontWeight: 'bold' }}>
-                  {item.quantity}
-                </span>
-                <button
-                  onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                  className="btn btn-sm"
-                  style={{ padding: '0.5rem', backgroundColor: '#007bff', color: 'white' }}
-                >
-                  <FaPlus />
-                </button>
-              </div>
-
-              <div style={{ textAlign: 'right', minWidth: '100px' }}>
-                <p style={{ fontWeight: 'bold', fontSize: '1.125rem', marginBottom: '0.5rem' }}>
-                  R$ {(item.product.price * item.quantity).toFixed(2)}
-                </p>
-                <button
-                  onClick={() => removeFromCart(item.product.id)}
-                  className="btn btn-danger btn-sm"
-                  style={{
-                    padding: '0.375rem 0.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem'
-                  }}
-                >
-                  <FaTrash /> Remover
-                </button>
-              </div>
-            </div>
-          ))}
+    <div className="cart-page">
+      <div className="container">
+        <div className="cart-header">
+          <h1 className="cart-title">Carrinho de Compras</h1>
+          <p className="cart-subtitle">{items.length} {items.length === 1 ? 'benefício' : 'benefícios'} no carrinho</p>
         </div>
 
-        {/* Summary */}
-        <div style={{
-          backgroundColor: 'white',
-          padding: '1.5rem',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-          height: 'fit-content',
-          gridColumn: '1 / -1',
-          maxWidth: '400px',
-          marginLeft: 'auto'
-        }}>
-          <h3 style={{ marginBottom: '1.5rem' }}>Resumo do Pedido</h3>
+        <div className="cart-layout">
+          {/* Cart Items */}
+          <div className="cart-items-section">
+            {items.map(item => {
+              const price = item.product.memberPrice || item.product.price;
+              const oldPrice = item.product.oldPrice || item.product.price;
+              const itemSavings = (oldPrice - price) * item.quantity;
 
-          <div style={{ marginBottom: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span>Subtotal:</span>
-              <span>R$ {getCartTotal().toFixed(2)}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-              <span>Frete:</span>
-              <span>R$ {shipping.toFixed(2)}</span>
-            </div>
-            <hr style={{ margin: '1rem 0' }} />
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '1.25rem',
-              fontWeight: 'bold',
-              color: '#007bff'
-            }}>
-              <span>Total:</span>
-              <span>R$ {total.toFixed(2)}</span>
-            </div>
+              return (
+                <div key={item.product.id} className="cart-item-card">
+                  <div className="cart-item-image-wrapper">
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="cart-item-image"
+                    />
+                    {item.product.exclusive && (
+                      <span className="cart-item-exclusive-badge">Exclusivo</span>
+                    )}
+                  </div>
+
+                  <div className="cart-item-details">
+                    <Link to={`/benefits/${item.product.id}`} className="cart-item-name-link">
+                      <h3 className="cart-item-name">{item.product.name}</h3>
+                    </Link>
+                    <p className="cart-item-brand">{item.product.brand}</p>
+
+                    <div className="cart-item-pricing">
+                      {oldPrice > price && (
+                        <span className="cart-item-old-price">
+                          R$ {oldPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        </span>
+                      )}
+                      <span className="cart-item-price">
+                        R$ {price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </span>
+                    </div>
+
+                    {itemSavings > 0 && (
+                      <div className="cart-item-savings">
+                        <FaTag />
+                        Você economiza R$ {itemSavings.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="cart-item-quantity-controls">
+                    <button
+                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                      className="cart-qty-btn cart-qty-btn-minus"
+                      aria-label="Diminuir quantidade"
+                    >
+                      <FaMinus />
+                    </button>
+                    <span className="cart-qty-value">{item.quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                      className="cart-qty-btn cart-qty-btn-plus"
+                      aria-label="Aumentar quantidade"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+
+                  <div className="cart-item-subtotal-section">
+                    <p className="cart-item-subtotal-label">Subtotal</p>
+                    <p className="cart-item-subtotal-value">
+                      R$ {(price * item.quantity).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </p>
+                    <button
+                      onClick={() => removeFromCart(item.product.id)}
+                      className="cart-item-remove-btn"
+                      aria-label="Remover item"
+                    >
+                      <FaTrash /> Remover
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          <button
-            onClick={() => navigate('/checkout')}
-            className="btn btn-primary"
-            style={{ width: '100%', marginBottom: '0.5rem' }}
-          >
-            Finalizar Compra
-          </button>
+          {/* Order Summary */}
+          <div className="cart-summary-section">
+            <div className="cart-summary-card">
+              <h3 className="cart-summary-title">Resumo do Pedido</h3>
 
-          <button
-            onClick={clearCart}
-            className="btn btn-danger"
-            style={{ width: '100%' }}
-          >
-            Limpar Carrinho
-          </button>
+              {savings > 0 && (
+                <div className="cart-summary-savings-highlight">
+                  <FaTag className="savings-icon" />
+                  <div>
+                    <strong>Você está economizando!</strong>
+                    <p className="savings-amount">R$ {savings.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                  </div>
+                </div>
+              )}
 
-          <Link to="/products" style={{
-            display: 'block',
-            textAlign: 'center',
-            marginTop: '1rem',
-            color: '#007bff'
-          }}>
-            Continuar Comprando
-          </Link>
+              <div className="cart-summary-breakdown">
+                <div className="cart-summary-row">
+                  <span>Subtotal</span>
+                  <span>R$ {subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                </div>
+                <div className="cart-summary-row">
+                  <span>Frete</span>
+                  <span className="cart-free-shipping">GRÁTIS</span>
+                </div>
+                <div className="cart-summary-divider"></div>
+                <div className="cart-summary-row cart-summary-total">
+                  <span>Total</span>
+                  <span>R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => navigate('/checkout')}
+                className="btn btn-coral btn-lg btn-block"
+              >
+                Finalizar Compra
+              </button>
+
+              <button
+                onClick={clearCart}
+                className="btn btn-outline-navy btn-block"
+              >
+                Limpar Carrinho
+              </button>
+
+              <Link to="/benefits" className="cart-continue-shopping">
+                ← Continuar Comprando
+              </Link>
+            </div>
+
+            <div className="cart-trust-badges">
+              <div className="cart-trust-item">
+                ✓ Frete Grátis para Membros
+              </div>
+              <div className="cart-trust-item">
+                ✓ Pagamento 100% Seguro
+              </div>
+              <div className="cart-trust-item">
+                ✓ Atendimento Exclusivo
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
