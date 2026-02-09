@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { User, Mail, Phone, Briefcase, Award, Gift } from 'lucide-react'
+import type { Profile } from '@/types/models'
 
 export const metadata = {
   title: 'Meu Perfil | MEG Exclusive',
@@ -28,7 +29,7 @@ export default async function MemberProfilePage() {
     .from('profiles')
     .select('*')
     .eq('id', user?.id || '')
-    .single()
+    .single() as { data: Profile | null; error: any }
 
   if (!profile) {
     return (

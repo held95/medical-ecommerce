@@ -19,6 +19,7 @@ import {
   CheckCircle,
   MessageCircle,
 } from 'lucide-react'
+import type { Experience } from '@/types/models'
 
 interface ExperienceDetailPageProps {
   params: Promise<{
@@ -34,7 +35,7 @@ export async function generateMetadata({ params }: ExperienceDetailPageProps) {
     .from('experiences')
     .select('title, short_description')
     .eq('slug', slug)
-    .single()
+    .single() as { data: Pick<Experience, 'title' | 'short_description'> | null; error: any }
 
   if (!experience) {
     return {
@@ -63,27 +64,27 @@ export default async function ExperienceDetailPage({
     `)
     .eq('slug', slug)
     .eq('is_active', true)
-    .single()
+    .single() as { data: (Experience & { category: { name: string; slug: string } | null }) | null; error: any }
 
   if (!experience) {
     notFound()
   }
 
   // Get related experiences from same category
-  const { data: relatedExperiences } = await supabase
+  const { data: relatedExperiences } = experience.category_id ? await supabase
     .from('experiences')
     .select('*')
     .eq('category_id', experience.category_id)
     .eq('is_active', true)
     .neq('id', experience.id)
-    .limit(3)
+    .limit(3) as { data: Experience[] | null; error: any } : { data: null }
 
   const imageUrl = experience.images?.[0] || '/placeholder-experience.jpg'
 
   // Calculate availability
   const hasLimitedAvailability =
     experience.availability_type === 'limited' && experience.max_availability
-  const remainingSlots = hasLimitedAvailability
+  const remainingSlots = hasLimitedAvailability && experience.max_availability
     ? experience.max_availability - experience.current_bookings
     : null
 

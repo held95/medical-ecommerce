@@ -140,15 +140,15 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
         phone: formData.phone ? formatPhone(formData.phone) : null,
         specialty: formData.specialty || null,
         crm: formData.crm || null,
-        membership_tier: 'basic',
+        membership_tier: 'basic' as const,
         available_invites: 3,
-      })
+      } as any)
 
       if (profileError) throw profileError
 
       // Mark invite as used
-      const { error: inviteError } = await supabase
-        .from('invites')
+      const { error: inviteError } = await (supabase
+        .from('invites') as any)
         .update({
           status: 'used',
           used_by: authData.user.id,

@@ -8,6 +8,7 @@ import { ExperienceCard } from '@/components/experiences/ExperienceCard'
 import { CategoryNav } from '@/components/experiences/CategoryNav'
 import { Badge } from '@/components/ui/badge'
 import { Filter } from 'lucide-react'
+import type { Experience, Category } from '@/types/models'
 
 export const metadata = {
   title: 'Experiências | MEG Exclusive',
@@ -37,7 +38,7 @@ export default async function ExperiencesPage({ searchParams }: ExperiencesPageP
       .from('categories')
       .select('id, name')
       .eq('slug', categorySlug)
-      .single()
+      .single() as { data: Pick<Category, 'id' | 'name'> | null; error: any }
 
     if (category) {
       query = query.eq('category_id', category.id)
@@ -45,15 +46,15 @@ export default async function ExperiencesPage({ searchParams }: ExperiencesPageP
   }
 
   // Execute query
-  const { data: experiences } = await query.order('created_at', { ascending: false })
+  const { data: experiences } = await query.order('created_at', { ascending: false }) as { data: Experience[] | null; error: any }
 
   // Get category name for display
   const categoryName = categorySlug
-    ? (await supabase
+    ? ((await supabase
         .from('categories')
         .select('name')
         .eq('slug', categorySlug)
-        .single()
+        .single() as { data: Pick<Category, 'name'> | null; error: any })
       ).data?.name
     : null
 

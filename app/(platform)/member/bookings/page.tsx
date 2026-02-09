@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { formatDateTime, formatBookingStatus } from '@/lib/utils/format'
 import { Calendar, Clock, Package } from 'lucide-react'
+import type { Booking, Experience } from '@/types/models'
 
 export const metadata = {
   title: 'Minhas Reservas | MEG Exclusive',
@@ -25,6 +26,9 @@ export default async function MemberBookingsPage() {
   } = await supabase.auth.getUser()
 
   // Get user bookings with experience details
+  type BookingWithExperience = Booking & {
+    experience: Pick<Experience, 'title' | 'slug' | 'images' | 'price_display'> | null
+  }
   const { data: bookings } = await supabase
     .from('bookings')
     .select(`
@@ -32,7 +36,7 @@ export default async function MemberBookingsPage() {
       experience:experiences(title, slug, images, price_display)
     `)
     .eq('user_id', user?.id || '')
-    .order('created_at', { ascending: false })
+    .order('created_at', { ascending: false }) as { data: BookingWithExperience[] | null; error: any }
 
   return (
     <div className="min-h-screen bg-background">

@@ -10,6 +10,7 @@ import { CategoryNav } from '@/components/experiences/CategoryNav'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Sparkles } from 'lucide-react'
+import type { Profile, Experience } from '@/types/models'
 
 export const metadata = {
   title: 'Dashboard | MEG Exclusive',
@@ -29,7 +30,7 @@ export default async function DashboardPage() {
     .from('profiles')
     .select('*')
     .eq('id', user?.id || '')
-    .single()
+    .single() as { data: Profile | null; error: any }
 
   // Get featured experiences (is_featured = true)
   const { data: featuredExperiences } = await supabase
@@ -38,7 +39,7 @@ export default async function DashboardPage() {
     .eq('is_featured', true)
     .eq('is_active', true)
     .order('created_at', { ascending: false })
-    .limit(4)
+    .limit(4) as { data: Experience[] | null; error: any }
 
   // Get additional highlighted experiences
   const { data: highlightedExperiences } = await supabase
@@ -46,7 +47,7 @@ export default async function DashboardPage() {
     .select('*')
     .eq('is_active', true)
     .order('created_at', { ascending: false })
-    .limit(6)
+    .limit(6) as { data: Experience[] | null; error: any }
 
   // Get first name from full name
   const firstName = profile?.full_name?.split(' ')[0] || 'Doutor(a)'

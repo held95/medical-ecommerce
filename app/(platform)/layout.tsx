@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { redirect } from 'next/navigation'
+import type { Profile } from '@/types/models'
 
 export default async function PlatformLayout({
   children,
@@ -30,7 +31,7 @@ export default async function PlatformLayout({
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single() as { data: Profile | null; error: any }
 
   return (
     <div className="flex min-h-screen flex-col">
