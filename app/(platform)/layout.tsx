@@ -16,17 +16,14 @@ export default async function PlatformLayout({
 }) {
   const supabase = await createClient()
 
-  // Get authenticated user
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Redirect to unauthorized if not logged in
   if (!user) {
     redirect('/unauthorized')
   }
 
-  // Get user profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -35,7 +32,11 @@ export default async function PlatformLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header userEmail={user.email} userName={profile?.full_name} />
+      <Header
+        userEmail={user.email}
+        userName={profile?.full_name}
+        pointsBalance={profile?.points_balance || 0}
+      />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

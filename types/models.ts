@@ -13,6 +13,7 @@ export type Experience = Database['public']['Tables']['experiences']['Row']
 export type Booking = Database['public']['Tables']['bookings']['Row']
 export type Partner = Database['public']['Tables']['partners']['Row']
 export type MembershipPlan = Database['public']['Tables']['membership_plans']['Row']
+export type PointsLedger = Database['public']['Tables']['points_ledger']['Row']
 
 // Extended types with relations
 export interface ExperienceWithCategory extends Experience {

@@ -2,7 +2,6 @@
 
 /**
  * Signup Form Component
- * Handles new doctor registration with invite code validation
  */
 
 import { useState } from 'react'
@@ -46,7 +45,7 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
 
   const validateInviteCode = async () => {
     if (!formData.inviteCode) {
-      setErrors({ ...errors, inviteCode: 'Código de convite obrigatório' })
+      setErrors({ ...errors, inviteCode: 'Codigo de convite obrigatorio' })
       return false
     }
 
@@ -60,14 +59,14 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
         .single()
 
       if (error || !data) {
-        setErrors({ ...errors, inviteCode: 'Código de convite inválido ou expirado' })
+        setErrors({ ...errors, inviteCode: 'Codigo de convite invalido ou expirado' })
         return false
       }
 
       setInviteValidated(true)
       setErrors({ ...errors, inviteCode: '' })
       return true
-    } catch (err) {
+    } catch {
       setErrors({ ...errors, inviteCode: 'Erro ao validar convite' })
       return false
     }
@@ -76,30 +75,15 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
 
-    if (!validateEmail(formData.email)) {
-      newErrors.email = 'Email inválido'
-    }
+    if (!validateEmail(formData.email)) newErrors.email = 'Email invalido'
 
     const passwordValidation = validatePassword(formData.password)
-    if (!passwordValidation.isValid) {
-      newErrors.password = passwordValidation.message || 'Senha inválida'
-    }
+    if (!passwordValidation.isValid) newErrors.password = passwordValidation.message || 'Senha invalida'
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'As senhas não coincidem'
-    }
-
-    if (!formData.fullName || formData.fullName.length < 3) {
-      newErrors.fullName = 'Nome completo obrigatório'
-    }
-
-    if (!validateCPFFormat(formData.cpf)) {
-      newErrors.cpf = 'CPF inválido (formato: XXX.XXX.XXX-XX ou XXXXXXXXXXX)'
-    }
-
-    if (formData.phone && !validatePhoneFormat(formData.phone)) {
-      newErrors.phone = 'Telefone inválido'
-    }
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'As senhas nao coincidem'
+    if (!formData.fullName || formData.fullName.length < 3) newErrors.fullName = 'Nome completo obrigatorio'
+    if (!validateCPFFormat(formData.cpf)) newErrors.cpf = 'CPF invalido (formato: XXX.XXX.XXX-XX ou XXXXXXXXXXX)'
+    if (formData.phone && !validatePhoneFormat(formData.phone)) newErrors.phone = 'Telefone invalido'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -114,25 +98,21 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
       if (!isValid) return
     }
 
-    if (!validateForm()) {
-      return
-    }
+    if (!validateForm()) return
 
     setIsLoading(true)
 
     try {
       const supabase = createClient()
 
-      // Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
       })
 
       if (authError) throw authError
-      if (!authData.user) throw new Error('Falha ao criar usuário')
+      if (!authData.user) throw new Error('Falha ao criar usuario')
 
-      // Create profile
       const { error: profileError } = await supabase.from('profiles').insert({
         id: authData.user.id,
         full_name: formData.fullName,
@@ -142,13 +122,15 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
         crm: formData.crm || null,
         membership_tier: 'basic' as const,
         available_invites: 3,
+        points_balance: 1000,
+        points_lifetime_earned: 1000,
+        access_status: 'active',
+        medical_verified: false,
       } as any)
 
       if (profileError) throw profileError
 
-      // Mark invite as used
-      const { error: inviteError } = await (supabase
-        .from('invites') as any)
+      await (supabase.from('invites') as any)
         .update({
           status: 'used',
           used_by: authData.user.id,
@@ -156,18 +138,10 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
         })
         .eq('code', formData.inviteCode)
 
-      if (inviteError) {
-        console.error('Failed to update invite:', inviteError)
-      }
-
-      // Redirect to dashboard
       router.push('/dashboard')
       router.refresh()
     } catch (err: any) {
-      console.error('Signup error:', err)
-      setGeneralError(
-        err.message || 'Erro ao criar conta. Por favor, tente novamente.'
-      )
+      setGeneralError(err.message || 'Erro ao criar conta. Tente novamente.')
     } finally {
       setIsLoading(false)
     }
@@ -182,29 +156,21 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
         </div>
       )}
 
-      {/* Invite Code */}
       <div className="space-y-2">
-        <Label htmlFor="inviteCode">Código de Convite</Label>
+        <Label htmlFor="inviteCode">Codigo de Convite</Label>
         <div className="flex gap-2">
           <Input
             id="inviteCode"
             type="text"
-            placeholder="MEG-XXXX-XXXX"
+            placeholder="PROTIME-XXXX-XXXX"
             value={formData.inviteCode}
-            onChange={(e) =>
-              setFormData({ ...formData, inviteCode: e.target.value.toUpperCase() })
-            }
+            onChange={(e) => setFormData({ ...formData, inviteCode: e.target.value.toUpperCase() })}
             required
             disabled={isLoading || inviteValidated}
             className="h-11"
           />
           {!inviteValidated && (
-            <Button
-              type="button"
-              onClick={validateInviteCode}
-              disabled={isLoading}
-              variant="outline"
-            >
+            <Button type="button" onClick={validateInviteCode} disabled={isLoading} variant="outline">
               Validar
             </Button>
           )}
@@ -214,159 +180,58 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
             </div>
           )}
         </div>
-        {errors.inviteCode && (
-          <p className="text-sm text-destructive">{errors.inviteCode}</p>
-        )}
+        {errors.inviteCode && <p className="text-sm text-destructive">{errors.inviteCode}</p>}
       </div>
 
       {inviteValidated && (
         <>
-          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="seu.email@exemplo.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-              disabled={isLoading}
-              className="h-11"
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email}</p>
-            )}
+            <Input id="email" type="email" placeholder="seu.email@exemplo.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required disabled={isLoading} className="h-11" />
+            {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
           </div>
 
-          {/* Password */}
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Mínimo 8 caracteres"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required
-              disabled={isLoading}
-              className="h-11"
-            />
-            {errors.password && (
-              <p className="text-sm text-destructive">{errors.password}</p>
-            )}
+            <Input id="password" type="password" placeholder="Minimo 8 caracteres" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required disabled={isLoading} className="h-11" />
+            {errors.password && <p className="text-sm text-destructive">{errors.password}</p>}
           </div>
 
-          {/* Confirm Password */}
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Digite a senha novamente"
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
-              }
-              required
-              disabled={isLoading}
-              className="h-11"
-            />
-            {errors.confirmPassword && (
-              <p className="text-sm text-destructive">{errors.confirmPassword}</p>
-            )}
+            <Input id="confirmPassword" type="password" placeholder="Digite a senha novamente" value={formData.confirmPassword} onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })} required disabled={isLoading} className="h-11" />
+            {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword}</p>}
           </div>
 
-          {/* Full Name */}
           <div className="space-y-2">
             <Label htmlFor="fullName">Nome Completo</Label>
-            <Input
-              id="fullName"
-              type="text"
-              placeholder="Dr. João Silva"
-              value={formData.fullName}
-              onChange={(e) =>
-                setFormData({ ...formData, fullName: e.target.value })
-              }
-              required
-              disabled={isLoading}
-              className="h-11"
-            />
-            {errors.fullName && (
-              <p className="text-sm text-destructive">{errors.fullName}</p>
-            )}
+            <Input id="fullName" type="text" placeholder="Dr. Joao Silva" value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} required disabled={isLoading} className="h-11" />
+            {errors.fullName && <p className="text-sm text-destructive">{errors.fullName}</p>}
           </div>
 
-          {/* CPF */}
           <div className="space-y-2">
             <Label htmlFor="cpf">CPF</Label>
-            <Input
-              id="cpf"
-              type="text"
-              placeholder="000.000.000-00"
-              value={formData.cpf}
-              onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-              required
-              disabled={isLoading}
-              className="h-11"
-            />
+            <Input id="cpf" type="text" placeholder="000.000.000-00" value={formData.cpf} onChange={(e) => setFormData({ ...formData, cpf: e.target.value })} required disabled={isLoading} className="h-11" />
             {errors.cpf && <p className="text-sm text-destructive">{errors.cpf}</p>}
           </div>
 
-          {/* Phone (optional) */}
           <div className="space-y-2">
             <Label htmlFor="phone">Telefone (Opcional)</Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="(11) 99999-9999"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              disabled={isLoading}
-              className="h-11"
-            />
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone}</p>
-            )}
+            <Input id="phone" type="tel" placeholder="(11) 99999-9999" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} disabled={isLoading} className="h-11" />
+            {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
           </div>
 
-          {/* Specialty (optional) */}
           <div className="space-y-2">
             <Label htmlFor="specialty">Especialidade (Opcional)</Label>
-            <Input
-              id="specialty"
-              type="text"
-              placeholder="Ex: Cardiologia"
-              value={formData.specialty}
-              onChange={(e) =>
-                setFormData({ ...formData, specialty: e.target.value })
-              }
-              disabled={isLoading}
-              className="h-11"
-            />
+            <Input id="specialty" type="text" placeholder="Ex: Cardiologia" value={formData.specialty} onChange={(e) => setFormData({ ...formData, specialty: e.target.value })} disabled={isLoading} className="h-11" />
           </div>
 
-          {/* CRM (optional) */}
           <div className="space-y-2">
             <Label htmlFor="crm">CRM (Opcional)</Label>
-            <Input
-              id="crm"
-              type="text"
-              placeholder="Ex: CRM-SP 123456"
-              value={formData.crm}
-              onChange={(e) => setFormData({ ...formData, crm: e.target.value })}
-              disabled={isLoading}
-              className="h-11"
-            />
+            <Input id="crm" type="text" placeholder="Ex: CRM-SP 123456" value={formData.crm} onChange={(e) => setFormData({ ...formData, crm: e.target.value })} disabled={isLoading} className="h-11" />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full h-11 font-semibold"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full h-11 font-semibold" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -380,7 +245,7 @@ export function SignupForm({ inviteCode }: SignupFormProps) {
       )}
 
       <p className="text-center text-sm text-muted-foreground">
-        Já possui uma conta?{' '}
+        Ja possui uma conta?{' '}
         <Link href="/login" className="text-primary hover:underline font-medium">
           Fazer login
         </Link>

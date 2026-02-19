@@ -59,7 +59,7 @@ INSERT INTO categories (name, slug, description, icon, display_order, is_active)
 -- SEED SAMPLE PARTNER
 -- ============================================
 INSERT INTO partners (name, contact_email, contact_phone, commission_percentage, is_active) VALUES
-  ('MEG Concierge Services', 'partners@meg.com.br', '5511999999999', 0.00, true);
+  ('ProTime Concierge Services', 'partners@protime.com.br', '5511999999999', 0.00, true);
 
 -- ============================================
 -- SEED SAMPLE EXPERIENCES
@@ -74,7 +74,7 @@ DECLARE
   cat_mobility UUID;
   cat_tech UUID;
   cat_education UUID;
-  partner_meg UUID;
+  partner_protime UUID;
 BEGIN
   SELECT id INTO cat_travel FROM categories WHERE slug = 'premium-travel';
   SELECT id INTO cat_wellness FROM categories WHERE slug = 'health-wellness';
@@ -82,13 +82,13 @@ BEGIN
   SELECT id INTO cat_mobility FROM categories WHERE slug = 'mobility-vehicles';
   SELECT id INTO cat_tech FROM categories WHERE slug = 'technology-tools';
   SELECT id INTO cat_education FROM categories WHERE slug = 'education-career';
-  SELECT id INTO partner_meg FROM partners WHERE name = 'MEG Concierge Services';
+  SELECT id INTO partner_protime FROM partners WHERE name = 'ProTime Concierge Services';
 
   -- Travel & Retreats
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_travel,
-      partner_meg,
+      partner_protime,
       'Swiss Alps Wellness Retreat',
       'swiss-alps-wellness-retreat',
       '5-day exclusive wellness retreat in the Swiss Alps with spa treatments, yoga, and gourmet dining',
@@ -102,7 +102,7 @@ BEGIN
     ),
     (
       cat_travel,
-      partner_meg,
+      partner_protime,
       'Private Island Experience - Maldives',
       'maldives-private-island',
       'Exclusive 7-day private island access in the Maldives with personal concierge and water sports',
@@ -116,10 +116,10 @@ BEGIN
     );
 
   -- Health & Wellness
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_wellness,
-      partner_meg,
+      partner_protime,
       'Advanced Health Check-up Program',
       'advanced-health-checkup',
       'Comprehensive preventive health screening with latest diagnostic technology',
@@ -133,7 +133,7 @@ BEGIN
     ),
     (
       cat_wellness,
-      partner_meg,
+      partner_protime,
       'Personal Performance Coaching',
       'performance-coaching',
       '12-week program with elite performance coach focused on stress management and peak performance',
@@ -147,10 +147,10 @@ BEGIN
     );
 
   -- Lifestyle & Comfort
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_lifestyle,
-      partner_meg,
+      partner_protime,
       'Premium Home Office Setup',
       'premium-home-office',
       'Complete ergonomic home office design and installation with premium furniture and technology',
@@ -164,10 +164,10 @@ BEGIN
     );
 
   -- Mobility & Vehicles
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_mobility,
-      partner_meg,
+      partner_protime,
       'Luxury Vehicle Test Drive Experience',
       'luxury-vehicle-test-drive',
       'Private test drive sessions with latest luxury and electric vehicles',
@@ -181,10 +181,10 @@ BEGIN
     );
 
   -- Technology & Tools
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_tech,
-      partner_meg,
+      partner_protime,
       'Latest Apple Product Access',
       'apple-products-access',
       'Priority access to new Apple products and exclusive trade-in offers',
@@ -198,14 +198,14 @@ BEGIN
     );
 
   -- Education & Career
-  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, is_featured, is_active) VALUES
+  INSERT INTO experiences (category_id, partner_id, title, slug, short_description, full_description, images, availability_type, max_availability, price_display, points_cost, is_featured, is_active) VALUES
     (
       cat_education,
-      partner_meg,
+      partner_protime,
       'Executive MBA Program Access',
       'executive-mba-program',
       'Exclusive partnerships with top business schools for Executive MBA programs',
-      'Advance your career with our exclusive partnerships with leading business schools. Members receive priority admission consideration, scholarship opportunities, and flexible payment plans for Executive MBA programs at institutions like FGV, Insper, and international partners.',
+      'Advance your career with our exclusive partnerships with leading business schools. Members receive priority admission consideration, scholarship opportunities, and flexible point redemption journeys for Executive MBA programs at institutions like FGV, Insper, and international partners.',
       ARRAY['https://images.unsplash.com/photo-1523050854058-8df90110c9f1'],
       'request_only',
       NULL,
@@ -271,7 +271,7 @@ INSERT INTO membership_plans (name, slug, price_monthly, price_yearly, features,
 -- ============================================
 -- Uncomment and customize to create initial invite for platform admin
 -- INSERT INTO invites (code, invited_email, status, expires_at) VALUES
---   ('MEG-ADMIN-2026', 'admin@meg.com.br', 'pending', TIMEZONE('utc', NOW()) + INTERVAL '90 days');
+--   ('PROTIME-ADMIN-2026', 'admin@protime.com.br', 'pending', TIMEZONE('utc', NOW()) + INTERVAL '90 days');
 
 -- ============================================
 -- VERIFICATION QUERIES
@@ -280,3 +280,4 @@ INSERT INTO membership_plans (name, slug, price_monthly, price_yearly, features,
 -- SELECT COUNT(*) FROM categories;
 -- SELECT COUNT(*) FROM experiences;
 -- SELECT name, slug FROM categories ORDER BY display_order;
+

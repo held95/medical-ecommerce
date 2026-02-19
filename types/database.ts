@@ -24,6 +24,10 @@ export interface Database {
           crm: string | null
           membership_tier: 'basic' | 'premium' | 'elite'
           available_invites: number
+          points_balance: number
+          points_lifetime_earned: number
+          access_status: 'active' | 'suspended' | 'pending_validation'
+          medical_verified: boolean
           created_at: string
           updated_at: string
         }
@@ -36,6 +40,10 @@ export interface Database {
           crm?: string | null
           membership_tier?: 'basic' | 'premium' | 'elite'
           available_invites?: number
+          points_balance?: number
+          points_lifetime_earned?: number
+          access_status?: 'active' | 'suspended' | 'pending_validation'
+          medical_verified?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -48,6 +56,10 @@ export interface Database {
           crm?: string | null
           membership_tier?: 'basic' | 'premium' | 'elite'
           available_invites?: number
+          points_balance?: number
+          points_lifetime_earned?: number
+          access_status?: 'active' | 'suspended' | 'pending_validation'
+          medical_verified?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -133,6 +145,7 @@ export interface Database {
           max_availability: number | null
           current_bookings: number
           price_display: string
+          points_cost: number
           is_featured: boolean
           is_active: boolean
           metadata: Json
@@ -152,6 +165,7 @@ export interface Database {
           max_availability?: number | null
           current_bookings?: number
           price_display?: string
+          points_cost?: number
           is_featured?: boolean
           is_active?: boolean
           metadata?: Json
@@ -171,6 +185,7 @@ export interface Database {
           max_availability?: number | null
           current_bookings?: number
           price_display?: string
+          points_cost?: number
           is_featured?: boolean
           is_active?: boolean
           metadata?: Json
@@ -189,6 +204,8 @@ export interface Database {
           confirmed_date: string | null
           notes: string | null
           concierge_notes: string | null
+          points_cost_snapshot: number | null
+          points_status: 'not_applicable' | 'reserved' | 'debited' | 'released'
           created_at: string
           updated_at: string
         }
@@ -202,6 +219,8 @@ export interface Database {
           confirmed_date?: string | null
           notes?: string | null
           concierge_notes?: string | null
+          points_cost_snapshot?: number | null
+          points_status?: 'not_applicable' | 'reserved' | 'debited' | 'released'
           created_at?: string
           updated_at?: string
         }
@@ -215,8 +234,48 @@ export interface Database {
           confirmed_date?: string | null
           notes?: string | null
           concierge_notes?: string | null
+          points_cost_snapshot?: number | null
+          points_status?: 'not_applicable' | 'reserved' | 'debited' | 'released'
           created_at?: string
           updated_at?: string
+        }
+      }
+      points_ledger: {
+        Row: {
+          id: string
+          user_id: string
+          booking_id: string | null
+          type: 'earn' | 'redeem' | 'refund' | 'adjustment'
+          points: number
+          balance_after: number
+          reason: string | null
+          source: string
+          created_by: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          booking_id?: string | null
+          type: 'earn' | 'redeem' | 'refund' | 'adjustment'
+          points: number
+          balance_after: number
+          reason?: string | null
+          source?: string
+          created_by?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          booking_id?: string | null
+          type?: 'earn' | 'redeem' | 'refund' | 'adjustment'
+          points?: number
+          balance_after?: number
+          reason?: string | null
+          source?: string
+          created_by?: string | null
+          created_at?: string
         }
       }
       partners: {
@@ -285,7 +344,38 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      reserve_points_for_booking: {
+        Args: { p_user_id: string; p_experience_id: string; p_booking_id: string }
+        Returns: void
+      }
+      confirm_booking_points_deduction: {
+        Args: { p_booking_id: string }
+        Returns: void
+      }
+      release_reserved_points: {
+        Args: { p_booking_id: string }
+        Returns: void
+      }
+      award_points: {
+        Args: {
+          p_user_id: string
+          p_points: number
+          p_reason: string
+          p_source: string
+          p_created_by?: string | null
+        }
+        Returns: void
+      }
+      adjust_points: {
+        Args: {
+          p_user_id: string
+          p_points: number
+          p_reason: string
+          p_source: string
+          p_created_by?: string | null
+        }
+        Returns: void
+      }
     }
     Enums: {
       [_ in never]: never

@@ -1,6 +1,6 @@
 /**
  * Formatting Utilities
- * Date, currency, and text formatting
+ * Date, points, and text formatting
  */
 
 import { format, formatDistanceToNow, parseISO } from 'date-fns'
@@ -30,14 +30,8 @@ export function formatRelativeTime(date: string | Date): string {
   return formatDistanceToNow(dateObj, { addSuffix: true, locale: ptBR })
 }
 
-/**
- * Formats currency to Brazilian Real
- */
-export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(value)
+export function formatPoints(value: number): string {
+  return new Intl.NumberFormat('pt-BR').format(value)
 }
 
 /**
@@ -64,6 +58,16 @@ export function formatBookingStatus(status: string): string {
     confirmed: 'Confirmado',
     completed: 'Concluído',
     cancelled: 'Cancelado',
+  }
+  return statusMap[status] || status
+}
+
+export function formatPointsStatus(status: string): string {
+  const statusMap: Record<string, string> = {
+    not_applicable: 'Nao aplicavel',
+    reserved: 'Reservado',
+    debited: 'Debitado',
+    released: 'Liberado',
   }
   return statusMap[status] || status
 }
