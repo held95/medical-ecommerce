@@ -90,6 +90,7 @@ export function ExperienceCard({ experience, featured = false }: ExperienceCardP
               src={imageUrl}
               alt={title}
               fill
+              unoptimized={imageUrl.startsWith('http')}
               className="object-cover transition-transform duration-300 hover:scale-105"
               sizes={featured ? '(max-width: 768px) 100vw, 800px' : '(max-width: 768px) 100vw, 400px'}
               onError={() => setImgError(true)}
