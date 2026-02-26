@@ -4,7 +4,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -89,13 +88,11 @@ export default async function ExperienceDetailPage({ params }: ExperienceDetailP
       <section className="container pb-8">
         <div className="grid lg:grid-cols-2 gap-8">
           <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-muted">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={imageUrl}
               alt={experience.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="absolute inset-0 w-full h-full object-cover"
             />
           </div>
 
