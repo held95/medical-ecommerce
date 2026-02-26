@@ -6,20 +6,12 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Star, Clock, Users } from 'lucide-react'
 import { formatPoints } from '@/lib/utils/format'
 import type { Experience } from '@/types/models'
-
-function normalizeImageUrl(url: string): string {
-  if (url.includes('unsplash.com') && !url.includes('?')) {
-    return `${url}?w=800&auto=format&fit=crop&q=80`
-  }
-  return url
-}
 
 interface ExperienceCardProps {
   experience: Experience
@@ -41,8 +33,7 @@ export function ExperienceCard({ experience, featured = false }: ExperienceCardP
     is_featured,
   } = experience
 
-  const rawUrl = images && images.length > 0 ? images[0] : ''
-  const imageUrl = rawUrl ? normalizeImageUrl(rawUrl) : ''
+  const imageUrl = images && images.length > 0 ? images[0] : ''
 
   const hasLimitedAvailability = availability_type === 'limited' && max_availability
   const remainingSlots = hasLimitedAvailability ? max_availability - current_bookings : null
@@ -86,14 +77,12 @@ export function ExperienceCard({ experience, featured = false }: ExperienceCardP
       <Link href={`/experiences/${slug}`}>
         <div className="relative w-full aspect-[16/9] overflow-hidden bg-muted">
           {imageUrl && !imgError ? (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={imageUrl}
               alt={title}
-              fill
-              unoptimized={imageUrl.startsWith('http')}
-              className="object-cover transition-transform duration-300 hover:scale-105"
-              sizes={featured ? '(max-width: 768px) 100vw, 800px' : '(max-width: 768px) 100vw, 400px'}
               onError={() => setImgError(true)}
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
